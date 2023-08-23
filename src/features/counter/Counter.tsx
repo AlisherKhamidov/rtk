@@ -10,16 +10,24 @@ import {
 	selectCount,
 } from './counterSlice';
 import styles from './Counter.module.css';
+import { selectUser } from '../auth/selectors';
+import { Navigate } from 'react-router-dom';
 
-export function Counter() {
+export function Counter(): JSX.Element {
 	const count = useAppSelector(selectCount);
 	const dispatch = useAppDispatch();
 	const [incrementAmount, setIncrementAmount] = useState('2');
 
 	const incrementValue = Number(incrementAmount) || 0;
-
+	// проверка залогинился ли юзер
+	const user = useAppSelector(selectUser);
+	if (!user) {
+		return <Navigate to="../login" />;
+	}
 	return (
 		<div>
+			{user && <button type="button">Только для авторизовавшихся</button>}
+
 			<div className={styles.row}>
 				<button
 					className={styles.button}
@@ -56,10 +64,7 @@ export function Counter() {
 				>
 					Add Async
 				</button>
-				<button
-					className={styles.button}
-					onClick={() => dispatch(incrementIfOdd(incrementValue))}
-				>
+				<button className={styles.button} onClick={() => dispatch(incrementIfOdd(incrementValue))}>
 					Add If Odd
 				</button>
 			</div>
